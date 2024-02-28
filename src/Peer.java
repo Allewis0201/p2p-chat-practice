@@ -18,6 +18,7 @@ public class Peer {
             communicate(userInputHandler, setupValues[0], networkCommunication);
 
             userInputHandler.close();
+            System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,5 +72,6 @@ public class Peer {
         }
 
         networkCommunication.close();
+
     }
 }

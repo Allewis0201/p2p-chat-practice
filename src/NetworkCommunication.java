@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,11 +26,16 @@ public class NetworkCommunication extends Thread {
         try (ServerSocket ss = serverSocket) {
             while (true) {
                 if (!ss.isClosed()) {
-                    Socket socket = ss.accept();
-                    peerHandler = new PeerHandler(socket);
-                    connectedPeers.add(socket);
-                    // 기존 스레드에서 메시지를 처리하도록 함
-                    peerHandler.handleMessages(socket);
+                    try {
+                        Socket socket = ss.accept();
+                        peerHandler = new PeerHandler(socket);
+                        connectedPeers.add(socket);
+                        // 기존 스레드에서 메시지를 처리하도록 함
+                        //peerHandler.handleMessages(socket);
+                    } catch (SocketException se) {
+                        // n번째 피어에서 발생하는 소켓에러 처리
+                        System.out.println("피어가 연결을 닫았습니다.");
+                    }
                 }
             }
         } catch (IOException e) {
