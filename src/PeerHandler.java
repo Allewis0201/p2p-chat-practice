@@ -3,10 +3,7 @@ import netscape.javascript.JSException;
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,11 +29,11 @@ public class PeerHandler extends Thread {
                         System.out.println("Connection closed by peer.");
                         break;
                     } else {
-                        handleMessages(socket);
+                        handleMessages(message);
                         //System.out.println(message);
                     }
                 } catch (IOException e) {
-//                    System.out.println("1");
+                    //System.out.println("1");
                     //System.out.println("채팅 종료");
                 }
             }
@@ -44,39 +41,22 @@ public class PeerHandler extends Thread {
             e.printStackTrace();
         }
     }
-
-    public void handleMessages(Socket socket) {
-
-        try
-        {
-            BufferedReader peerReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            while (true) {
-               /* String message = peerReader.readLine();
+    public void handleMessages(String message) {
+        try {
+            /* String message = peerReader.readLine();
                 if (message == null) break;
-                System.out.println(message);*/
-
-                JsonObject jsonObject = Json.createReader(peerReader).readObject();
-                if (jsonObject.containsKey("username")){
-                    System.out.println("["+jsonObject.getString("username") + "]: "+jsonObject.getString("message"));
-                }
+                System.out.println(message); */
+            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject();
+            if (jsonObject.containsKey("username")) {
+                System.out.println("[" + jsonObject.getString("username") + "]: " + jsonObject.getString("message"));
             }
-        }
-        catch (JsonException e)
-        {
+        } catch (JsonException e) {
             interrupt();
         }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-
     }
 
     public void sendMessage(Set<Socket> uniquePeers, String message)
     {
-
         for (Socket socket : uniquePeers) {
             try {
                 PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -86,5 +66,4 @@ public class PeerHandler extends Thread {
             }
         }
     }
-
 }

@@ -1,13 +1,10 @@
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class NetworkCommunication extends Thread {
     private ServerSocket serverSocket;
@@ -22,7 +19,6 @@ public class NetworkCommunication extends Thread {
     }
 
     public void run() {
-
         try (ServerSocket ss = serverSocket) {
             while (true) {
                 if (!ss.isClosed()) {
